@@ -1,7 +1,8 @@
 // Dependencies
 // =============================================================
-var express = require("express");
-var path = require("path");
+const express = require("express");
+const path = require("path");
+const fs = require("fs");
 
 
 // Sets up the Express App
@@ -14,26 +15,29 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'))
 
-// Data
 // =============================================================
-var tables = [];
-var reserved = [];
-
-// Routes
+// API Routes
 // =============================================================
-
-
 // Displays the notes.html page
 app.get("/notes", function(req, res) {
+
+    
+
+
     res.sendFile(path.join(__dirname, "./public/notes.html"));
 });
 
 
-// API Routes
-// =============================================================
 // Displays all saved notes as JSON
-app.get("/api/tables", function(req, res) {
-    return res.json(tables);
+app.get("/api/notes", function(req, res) {
+    console.log("IN /api/notes");
+    console.log("");
+      // Use the fs package to read the db.json file
+  fs.readFile(__dirname + "/db/db.json", function(err, data) {
+    if (err) throw err;
+    // Respond with the contents of the db.json file
+    res.json(JSON.parse(data));
+  });
 });
 
 // Create a new note - takes in JSON input
@@ -42,17 +46,18 @@ app.post("/api/notes", function(req, res) {
     // This works because of our body parsing middleware
     var newNote = req.body;
     
+    console.log("");
+    console.log("newNote");
     console.log(newNote);
-    
-    // checkTables(newCustomer);
-    
+    console.log("");
+        
     res.json(newNote);
 });
 
 // Delete note using unique id
 app.post("/api/notes/:id", function(req, res) {
-    tables = [];
-    reserved = [];
+
+
 });
 // Basic route that sends the user first to the AJAX Page
 app.get("*", function(req, res) {
