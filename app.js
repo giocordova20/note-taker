@@ -28,11 +28,11 @@ app.get("/notes", function(req, res) {
 
 // Displays all saved notes as JSON
 app.get("/api/notes", function(req, res) {
-      // Use the fs package to read the db.json file
+    // Use the fs package to read the db.json file
   fs.readFile(__dirname + "/db/db.json", function(err, data) {
     if (err) throw err;
+
     // Respond with the contents of the db.json file
-    // console.log(JSON.parse(data))
     res.json(JSON.parse(data));
   });
 });
@@ -47,7 +47,7 @@ app.post("/api/notes", function(req, res) {
         id: uuid.v4()
         };
             
-    fs.readFile(__dirname + "/db/db.json", (err, data) =>{
+    fs.readFile(__dirname + "/db/db.json", (err, data) => {
         if (err) throw err;
 
         let notes = JSON.parse(data);   // Get the notes stored in db.json. 
@@ -64,10 +64,35 @@ app.post("/api/notes", function(req, res) {
 });
 
 // Delete note using unique id
-app.post("/api/notes/:id", function(req, res) {
+app.delete("/api/notes/:id", function(req, res) {
+    let id = req.params.id;
+    console.log("     id: ", id)
 
+    fs.readFile(__dirname + "/db/db.json", (err, data) => {
+        if (err) throw err;
+
+        let notes = JSON.parse(data);   // Get the notes stored in db.json. 
+        console.log("");
+        console.log("    notes: ", notes);
+        console.log("");
+        // notes.push(newNote);            // Add the new note to the notes array
+        
+        console.log(notes.filter((item) => item.id !== id));
+        let udpatedNotes= notes.filter((item) => item.id !== id);
+
+        // Write the updated array back to the db.json file
+        fs.writeFile("./db/db.json", JSON.stringify(udpatedNotes),"utf-8", err => {
+            if (err) throw err;
+        });
+        res.json(JSON.parse(data));
+
+
+      });
 
 });
+
+
+
 // Basic route that sends the user first to the AJAX Page
 app.get("*", function(req, res) {
     res.sendFile(path.join(__dirname, "./public/index.html"));
