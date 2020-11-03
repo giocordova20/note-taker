@@ -59,25 +59,16 @@ app.post("/api/notes", function(req, res) {
         });
         res.json(JSON.parse(data));
       });
-
-
 });
 
 // Delete note using unique id
 app.delete("/api/notes/:id", function(req, res) {
     let id = req.params.id;
-    console.log("     id: ", id)
 
     fs.readFile(__dirname + "/db/db.json", (err, data) => {
         if (err) throw err;
 
         let notes = JSON.parse(data);   // Get the notes stored in db.json. 
-        console.log("");
-        console.log("    notes: ", notes);
-        console.log("");
-        // notes.push(newNote);            // Add the new note to the notes array
-        
-        console.log(notes.filter((item) => item.id !== id));
         let udpatedNotes= notes.filter((item) => item.id !== id);
 
         // Write the updated array back to the db.json file
@@ -85,12 +76,8 @@ app.delete("/api/notes/:id", function(req, res) {
             if (err) throw err;
         });
         res.json(JSON.parse(data));
-
-
       });
-
 });
-
 
 
 // Basic route that sends the user first to the AJAX Page
@@ -103,12 +90,3 @@ app.get("*", function(req, res) {
 app.listen((PORT), function() {
   console.log("App listening on PORT http://localhost:" + PORT);
 });
-
-function checkTables(customer) {
-    if(tables.length <5) {
-        tables.push(customer);
-    }
-    else {
-        reserved.push(customer);
-    }
-}

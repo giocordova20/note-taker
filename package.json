@@ -4,7 +4,10 @@
   "description": "Note Taker application using express to store data",
   "main": "app.js",
   "dependencies": {
-    "uuid": "^8.3.1"
+    "uuid": "^8.3.1",
+    "express": "^4.17.1",
+    "path": "^0.12.7",
+    "fs": "^0.0.1-security"
   },
   "devDependencies": {},
   "scripts": {
