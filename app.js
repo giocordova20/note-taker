@@ -3,6 +3,9 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
+const uuid = require("uuid");
+
+// =============================================================
 
 
 // Sets up the Express App
@@ -20,22 +23,16 @@ app.use(express.static('public'))
 // =============================================================
 // Displays the notes.html page
 app.get("/notes", function(req, res) {
-
-    
-
-
     res.sendFile(path.join(__dirname, "./public/notes.html"));
 });
 
-
 // Displays all saved notes as JSON
 app.get("/api/notes", function(req, res) {
-    console.log("IN /api/notes");
-    console.log("");
       // Use the fs package to read the db.json file
   fs.readFile(__dirname + "/db/db.json", function(err, data) {
     if (err) throw err;
     // Respond with the contents of the db.json file
+    // console.log(JSON.parse(data))
     res.json(JSON.parse(data));
   });
 });
@@ -43,15 +40,27 @@ app.get("/api/notes", function(req, res) {
 // Create a new note - takes in JSON input
 app.post("/api/notes", function(req, res) {
     // req.body hosts is equal to the JSON post sent from the user
-    // This works because of our body parsing middleware
-    var newNote = req.body;
-    
-    console.log("");
-    console.log("newNote");
-    console.log(newNote);
-    console.log("");
-        
-    res.json(newNote);
+    // Set the newNote object to hold the new note. Use uuid.v4() to generate an id    
+    const newNote = {
+        title: req.body.title, 
+        text: req.body.text,
+        id: uuid.v4()
+        };
+            
+    fs.readFile(__dirname + "/db/db.json", (err, data) =>{
+        if (err) throw err;
+
+        let notes = JSON.parse(data);   // Get the notes stored in db.json. 
+        notes.push(newNote);            // Add the new note to the notes array
+
+        // Write the updated array back to the db.json file
+        fs.writeFile("./db/db.json", JSON.stringify(notes),"utf-8", err => {
+            if (err) throw err;
+        });
+        res.json(JSON.parse(data));
+      });
+
+
 });
 
 // Delete note using unique id
